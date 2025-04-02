@@ -12,11 +12,22 @@
         <h1 class="text-center">Links Salvos</h1>
         <p class="text-center">Aqui estão os links que foram enviados:</p>
 
+        <!-- Mensagem de sucesso -->
+        {% if message %}
+        <div class="alert alert-success text-center" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <!-- Lista de links -->
         {% if links %}
         <ul class="list-group">
             {% for link in links %}
-            <li class="list-group-item">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
                 <a href="{{ link }}" target="_blank">{{ link }}</a>
+                <form action="/delete-link/{{ loop.index0 }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                </form>
             </li>
             {% endfor %}
         </ul>
@@ -24,6 +35,14 @@
         <p class="text-center text-muted">Nenhum link foi salvo ainda.</p>
         {% endif %}
 
+        <!-- Botão para limpar todos os links -->
+        <div class="text-center mt-4">
+            <form action="/clear-links" method="POST">
+                <button type="submit" class="btn btn-warning">Limpar Todos os Links</button>
+            </form>
+        </div>
+
+        <!-- Botão para voltar -->
         <div class="text-center mt-4">
             <a href="/" class="btn btn-primary">Voltar</a>
         </div>

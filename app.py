@@ -37,5 +37,36 @@ def view_links():
             links = [row[0] for row in reader]
     return render_template("view_links.html", links=links)
 
+@app.route("/clear-links", methods=["POST"])
+def clear_links():
+    if os.path.isfile(LINKS_FILE):
+        # Limpa o conteúdo do arquivo CSV
+        with open(LINKS_FILE, "w", encoding="utf-8") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(["Link"])  # Reescreve apenas o cabeçalho
+    return render_template("view_links.html", links=[], message="Todos os links foram excluídos com sucesso!")
+
+@app.route("/delete-link/<int:link_index>", methods=["POST"])
+def delete_link(link_index):
+    links = []
+    if os.path.isfile(LINKS_FILE):
+        with open(LINKS_FILE, "r", encoding="utf-8") as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)  # Pula o cabeçalho
+            links = [row[0] for row in reader if row]
+
+        # Remove o link pelo índice
+        if 0 <= link_index < len(links):
+            del links[link_index]
+
+        # Reescreve o arquivo CSV com os links restantes
+        with open(LINKS_FILE, "w", encoding="utf-8", newline="") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(["Link"])  # Reescreve o cabeçalho
+            for link in links:
+                writer.writerow([link])
+
+    return render_template("view_links.html", links=links, message="O link foi excluído com sucesso!")
+
 if __name__ == '__main__':
     app.run(debug=True)
